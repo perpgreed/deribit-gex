@@ -50,15 +50,17 @@ async def gex(options, session):
         strike = i['strike']
         gex[strike] = gex.get(strike, 0.0) + sign * gamma * oi * CONTRACT_SIZE
 
+    net_total = sum(gex.values())
+    abs_total = sum(abs(v) for v in gex.values())
     upper = max(((k, v) for k, v in gex.items() if k > spot), key=lambda x: abs(x[1]), default=(None, 0))
     lower = max(((k, v) for k, v in gex.items() if k < spot), key=lambda x: abs(x[1]), default=(None, 0))
-    return spot, upper, lower
+    return spot, upper, lower, net_total, abs_total
 
 async def main():
     async with aiohttp.ClientSession() as session:
         options = await get_options(session)
-        spot, (strike_upper, gex_upper), (strike_lower, gex_lower) = await gex(options, session)
-        print(f'Spot Price: {spot}\nmax GEX above: {strike_upper} | gamma*OI: {gex_upper:+.2f}\nmax GEX below: {strike_lower} | gamma*OI: {gex_lower:+.2f}')
+        spot, (strike_upper, gex_upper), (strike_lower, gex_lower), net_total, abs_total = await gex(options, session)
+        print(f'Spot Price: {spot}\nmax GEX above: {strike_upper} | gamma*OI: {gex_upper:+.2f}\nmax GEX below: {strike_lower} | gamma*OI: {gex_lower:+.2f}\nnet total GEX: {net_total:+.2f}\nabsolute total GEX: {abs_total:+.2f}')
 
 if __name__ == '__main__':
     asyncio.run(main())
