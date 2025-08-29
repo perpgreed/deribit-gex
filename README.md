@@ -1,6 +1,14 @@
 # Deribit Max Gamma Exposure (GEX)
 
-Python script that fetches options data from Deribit and identifies the strikes with the highest absolute gamma exposure (GEX) above and below the current spot price.
+Python script that fetches options data from Deribit and computes gamma exposure (GEX) across all strikes.
+
+Output:
+- Spot price
+- Strikes with highest absolute GEX above and below spot
+- Total net GEX : 
+  - Positive -> mean reverting regime (dealers long gamma)
+  - Negative -> trend chasing regime (dealers short gamma)
+- Total absolute GEX : mass of dealer flow
 
 ---
 
